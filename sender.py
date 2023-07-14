@@ -1,3 +1,9 @@
+# /*
+#  * @Author: kif kif101001000@163.com 
+#  * @Date: 2023-07-14 18:53:19 
+#  * @Last Modified by:   kif kif101001000@163.com  
+#  * @Last Modified time: 2023-07-14 18:53:19 
+#  */
 
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
@@ -15,7 +21,13 @@ def sendFile(filePath,fileName):
     message['From'] = sender #发件人
     message['To'] =Header(",".join(to_addr)) #处理多个收件人信息，list 转字符串
     message['Subject'] = Header(title, 'utf-8').encode() # 邮件标题
-    msg=title
+    msg='''
+
+序号	日期	人员姓名	今日计划内任务						今日计划外任务		
+			任务名称	安排人	计划工时	实际工时	状态	备注	任务名称	安排人	实际工时
+1	2023/7/13	凯凡	营销管理系统需求开发	漆玉	5	5	完成		hotelv预订员管理迁移	漆玉	4
+
+'''
     message.attach(MIMEText(msg,'plain','utf-8'))
     # MIMEApplication对附件进行封装
     xlsxpart = MIMEApplication(open(filePath, 'rb').read())
@@ -34,3 +46,4 @@ def sendFile(filePath,fileName):
     except smtplib.SMTPException as e:
         print('error',e)
     
+sendFile('./file/技术部工作日志-凯凡-2023-07-13.xlsx','技术部工作日志-凯凡-2023-07-13.xlsx')
