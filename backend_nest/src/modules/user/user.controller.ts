@@ -65,13 +65,42 @@ export class UserController {
   }
 
   @Post('login')
-  async Login(@Body() data: { email: string; password: string }) {
+  async Login(
+    @Body() data: { email: string; password: string },
+  ): Promise<Result> {
     // const authResult = await this.authservice.validateUser(
     //   data.email,
     //   data.password,
     // );
+    const user = await this.userService.findByemail(data.email);
+
+    if (user) {
+      const hashedPassword = user.password;
+      const salt = user.passwdSalt;
+      // 通过密码盐，加密传参，再与数据库里的比较，判断是否相等
+      const hashPassword = encryptPassword(data.password, salt);
+      if (hashedPassword === hashPassword) {
+        // 密码正确
+        return {
+          code: 1,
+          user,
+        };
+      } else {
+        // 密码错误
+        return {
+          code: 400,
+          msg: '密码错误',
+          data: {},
+        };
+      }
+    }
+    // 查无此人
     return {
-      data,
+      code: 3,
+      user: null,
     };
+    // return {
+    //   data,
+    // };
   }
 }
