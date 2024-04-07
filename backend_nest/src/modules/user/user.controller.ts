@@ -1,4 +1,12 @@
-import { Body, Controller, Post, HttpCode } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  Get,
+  Param,
+  Headers,
+} from '@nestjs/common';
 import { Result } from 'src/common/result.interface';
 import { Public } from 'src/common/public.decorator';
 
@@ -106,5 +114,29 @@ export class UserController {
     // return {
     //   data,
     // };
+  }
+
+  @Get('getUserInfo/:id')
+  async getUserInfo(@Param() params: { id: number }) {
+    const { id } = params;
+    const user = await this.userService.getUserByid(Number(id));
+    if (user) {
+      return {
+        code: 200,
+        msg: 'ok',
+        data: {
+          id: id,
+          email: user.email,
+          username: user.username,
+          avatar: user.avatar,
+        },
+      };
+    } else {
+      return {
+        code: 400,
+        msg: 'no user',
+        data: {},
+      };
+    }
   }
 }

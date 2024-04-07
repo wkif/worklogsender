@@ -35,4 +35,16 @@ export class UserService {
       return void 0;
     }
   }
+  async getUserByid(id: number) {
+    const user = await this.user.findOne({
+      where: {
+        id,
+      },
+    });
+    if (user) {
+      return user;
+    } else {
+      return void 0;
+    }
+  }
 }
