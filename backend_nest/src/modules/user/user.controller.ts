@@ -1,15 +1,21 @@
 import { Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { Result } from 'src/common/result.interface';
-// import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/common/public.decorator';
 
 // 引入加密函数
 import { makeSalt, encryptPassword } from '../../utils/cryptogram';
 
 import { UserService } from './user.service';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
+
+  @Public()
   @Post('register')
   @HttpCode(200)
   async register(
@@ -64,14 +70,11 @@ export class UserController {
     }
   }
 
+  @Public()
   @Post('login')
   async Login(
     @Body() data: { email: string; password: string },
   ): Promise<Result> {
-    // const authResult = await this.authservice.validateUser(
-    //   data.email,
-    //   data.password,
-    // );
     const user = await this.userService.findByemail(data.email);
 
     if (user) {
@@ -79,12 +82,10 @@ export class UserController {
       const salt = user.passwdSalt;
       // 通过密码盐，加密传参，再与数据库里的比较，判断是否相等
       const hashPassword = encryptPassword(data.password, salt);
-      if (hashedPassword === hashPassword) {
+      console.log('hashPassword', hashPassword, hashedPassword);
+      if (hashedPassword == hashPassword) {
         // 密码正确
-        return {
-          code: 1,
-          user,
-        };
+        return this.authService.certificate(user);
       } else {
         // 密码错误
         return {
@@ -93,12 +94,15 @@ export class UserController {
           data: {},
         };
       }
+    } else {
+      return {
+        code: 500,
+        msg: '邮箱未注册',
+        data: {},
+      };
     }
     // 查无此人
-    return {
-      code: 3,
-      user: null,
-    };
+
     // return {
     //   data,
     // };
