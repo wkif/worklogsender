@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  Get,
-  Param,
-  Headers,
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, Get, Param } from '@nestjs/common';
 import { Result } from 'src/common/result.interface';
 import { Public } from 'src/common/public.decorator';
 

@@ -11,6 +11,7 @@ import { jwtAuthGuard } from './modules/auth/jwt-auth.grard';
 
 import config from './common/config';
 import { APP_GUARD } from '@nestjs/core';
+import { LinksModule } from './modules/links/links.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +30,7 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     UserModule,
     AuthModule,
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [
